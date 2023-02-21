@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: docker-todo-db
+    ports:
+      - 5432:5432
+    volumes:
+      - ./dbscripts:/docker-entrypoint-initdb.d
+      - ./postgres-data:/var/lib/postgresql/data
+  web:
+    build:
+      context: ./todo-vue
+    volumes:
+      - ./todo-vue:/web
+      - /web/node_modules
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - HOST=0.0.0.0
