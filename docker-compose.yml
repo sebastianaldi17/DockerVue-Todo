@@ -24,3 +24,12 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true
       - HOST=0.0.0.0
+  backend-go:
+    build:
+      context: ./backend-go
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend-go:/backend-go
+    ports:
+      - 3000:3000
