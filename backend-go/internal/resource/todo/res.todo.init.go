@@ -1,12 +1,52 @@
 package todo
 
-import "database/sql"
+import (
+	"github.com/jmoiron/sqlx"
+)
 
 type Resource struct {
-	db *sql.DB
+	db *sqlx.DB
 }
 
-func New(db *sql.DB) *Resource {
+const (
+	queryGetAll = `
+	SELECT
+		id,
+		content,
+		status,
+		finished,
+		created_at,
+		updated_at
+	FROM
+		todos
+	`
+
+	queryAddTodo = `
+	INSERT INTO
+		todos(content, status, finished)
+	VALUES
+		($1, $2, $3)
+	`
+
+	queryDeleteTodo = `
+	DELETE FROM
+		todos
+	WHERE
+		id = $1
+	`
+
+	queryUpdateTodo = `
+	UPDATE
+		todos
+	SET
+		%s
+		updated_at = now()
+	WHERE
+		id = ?
+	`
+)
+
+func New(db *sqlx.DB) *Resource {
 	todo := Resource{
 		db: db,
 	}
