@@ -13,6 +13,13 @@ func (r *Resource) GetTodos() ([]entityTodo.Todo, error) {
 	return todos, err
 }
 
+func (r *Resource) GetTodoByID(id int64) (entityTodo.Todo, error) {
+	var todo entityTodo.Todo
+	err := r.db.Get(&todo, queryGetByID, id)
+
+	return todo, err
+}
+
 func (r *Resource) AddTodo(todo entityTodo.Todo) error {
 	_, err := r.db.Exec(queryAddTodo, todo.Content, todo.Status, todo.Finished)
 	return err

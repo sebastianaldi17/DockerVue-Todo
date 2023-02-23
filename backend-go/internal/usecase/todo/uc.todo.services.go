@@ -6,6 +6,10 @@ func (u *Usecase) GetTodos() ([]entityTodo.Todo, error) {
 	return u.todoRes.GetTodos()
 }
 
+func (u *Usecase) GetTodoByID(id int64) (entityTodo.Todo, error) {
+	return u.todoRes.GetTodoByID(id)
+}
+
 func (u *Usecase) AddTodo(todo entityTodo.Todo) error {
 	if todo.Status == 0 {
 		todo.Status = entityTodo.StatusActive

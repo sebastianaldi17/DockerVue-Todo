@@ -7,5 +7,6 @@ type todoUsecase interface {
 	AddTodo(todo entityTodo.Todo) error
 	DeleteTodo(id int64) error
 	GetTodos() ([]entityTodo.Todo, error)
+	GetTodoByID(id int64) (entityTodo.Todo, error)
 	UpdateTodo(req entityTodo.UpdateRequest, id int64) (int64, error)
 }

@@ -37,6 +37,37 @@ func (h *Handler) GetTodos(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *Handler) GetTodoByID(w http.ResponseWriter, r *http.Request) {
+	get_id := chi.URLParam(r, "id")
+
+	id, err := strconv.ParseInt(get_id, 10, 64)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("ID must be integer"))
+		return
+	}
+
+	todos, err := h.todoUsecase.GetTodoByID(id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	jsonBytes, err := json.Marshal(todos)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	_, err = w.Write(jsonBytes)
+	if err != nil {
+		log.Printf("Error writing to HTTP: %+v", err)
+	}
+}
+
 func (h *Handler) AddTodo(w http.ResponseWriter, r *http.Request) {
 	var data entityTodo.Todo
 	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {

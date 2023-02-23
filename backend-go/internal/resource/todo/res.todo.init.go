@@ -21,6 +21,20 @@ const (
 		todos
 	`
 
+	queryGetByID = `
+	SELECT
+		id,
+		content,
+		status,
+		finished,
+		created_at,
+		updated_at
+	FROM
+		todos
+	WHERE
+		id = $1
+	`
+
 	queryAddTodo = `
 	INSERT INTO
 		todos(content, status, finished)

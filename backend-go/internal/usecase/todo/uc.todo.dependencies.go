@@ -7,5 +7,6 @@ type todoResource interface {
 	AddTodo(todo entityTodo.Todo) error
 	DeleteTodo(id int64) error
 	GetTodos() ([]entityTodo.Todo, error)
+	GetTodoByID(id int64) (entityTodo.Todo, error)
 	UpdateTodo(id int64, req entityTodo.UpdateRequest) (int64, error)
 }
