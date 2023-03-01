@@ -12,7 +12,7 @@ import (
 
 func (h *Handler) Hello(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("but it works on local :)"))
+	w.Write([]byte("Hi"))
 }
 
 func (h *Handler) GetTodos(w http.ResponseWriter, r *http.Request) {
@@ -44,6 +44,12 @@ func (h *Handler) GetTodoByID(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("ID must be integer"))
+		return
+	}
+
+	if id <= 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("ID must be bigger than 0"))
 		return
 	}
 
