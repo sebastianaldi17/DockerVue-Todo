@@ -30,6 +30,22 @@ services:
     depends_on:
       - postgres
     volumes:
-      - ./backend-go:/backend-go
+      - ./backend-go:/go-server
+    ports:
+      - 3000:3000
+  backend-node:
+    build:
+      context: ./backend-node
+    volumes:
+      - ./backend-node:/node-server
+      - /node-server/node_modules
+    depends_on:
+      - postgres
+      - web
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - HOST=0.0.0.0
+      - PORT=3000
+      - DBHOST=postgres
     ports:
       - 3000:3000
