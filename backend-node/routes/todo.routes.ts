@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { TodoController } from "../controllers/todo.controller";
+import { TodoView } from "../views/todo.views";
 
 var express = require('express');
-var todo: TodoController = new TodoController();
+var todo: TodoView = new TodoView();
 
 var routes: Router = express.Router();
 routes.get('/', todo.index);

@@ -1,21 +1,19 @@
 import { Request, Response } from "express";
-import pool from "../database/postgres";
+import { addTodo, deleteTodo, fetchAllTodo, fetchTodoByID, updateTodo } from "../controllers/todo.controllers";
 import TodoSchema from "../models/todo";
 
-export class TodoController {
+export class TodoView {
     public index(req: Request, res: Response) {
         res.send("Hello World!");
     }
 
     public getAll(req: Request, res: Response) {
-        pool.query(`SELECT * FROM todos`, (error, results) => {
-            if (error) {
-                console.error(error);
-                res.status(500).send(error.message);
-                return;
-            }
-            res.status(200).json(results.rows);
-        });
+        fetchAllTodo().then(result => {
+            res.status(200).json(result.rows);
+        }).catch(error => {
+            console.error(error);
+            res.status(500).send(error.message);
+        })
     }
 
     public get(req: Request, res: Response) {
@@ -28,18 +26,16 @@ export class TodoController {
             res.status(400).send("ID must be bigger than 0");
             return;
         }
-        pool.query(`SELECT * FROM todos WHERE id = $1`, [id], (error, results) => {
-            if (error) {
-                console.error(error);
-                res.status(500).send(error.message);
-                return;
-            }
-
-            if (results.rows.length > 0) {
-                res.status(200).json(results.rows[0]);
+        fetchTodoByID(id).then(result => {
+            if (result.rows.length > 0) {
+                res.status(200).json(result.rows[0]);
             } else {
                 res.status(404).json({});
             }
+        }).catch(error => {
+            console.error(error);
+            res.status(500).send(error.message);
+            return;
         })
     }
 
@@ -71,14 +67,11 @@ export class TodoController {
             columns.push('finished');
             counter += 1;
         }
-        pool.query(`INSERT INTO todos(${columns.join(',')}) VALUES (${args.join(',')})`, params, (error, result) => {
-            if (error) {
-                console.error(error);
-                res.status(500).send(error.message);
-                return;
-            }
-
+        addTodo(args, params, columns).then(result => {
             res.status(200).send("Added to db");
+        }).catch(error => {
+            console.error(error);
+            res.status(500).send(error.message);
         });
     }
 
@@ -93,20 +86,17 @@ export class TodoController {
             return;
         }
 
-        pool.query(`DELETE FROM todos WHERE id = $1`, [id], (error, result) => {
-            if (error) {
-                console.error(error);
-                res.status(500).send(error.message);
-                return;
-            }
-
+        deleteTodo(id).then(result => {
             if (result.rowCount <= 0) {
                 res.status(404).send("Todo not found");
                 return;
             }
 
             res.status(200).send("Deleted from db");
-        })
+        }).catch(error => {
+            console.error(error);
+            res.status(500).send(error.message);
+        });
     }
 
     public update(req: Request, res: Response) {
@@ -146,14 +136,11 @@ export class TodoController {
             counter += 1;
         }
 
-        pool.query(`UPDATE todos SET ${args.join(',')}, updated_at = now() WHERE id = $1`, params, (error, result) => {
-            if (error) {
-                console.error(error);
-                res.status(500).send(error.message);
-                return;
-            }
-
+        updateTodo(args, params).then(result => {
             res.status(200).send("Updated to db");
-        });
+        }).catch(error => {
+            console.error(error);
+            res.status(500).send(error.message);
+        })
     }
 }
