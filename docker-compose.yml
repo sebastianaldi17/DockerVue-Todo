@@ -20,10 +20,20 @@ services:
     ports:
       - 8080:8080
     depends_on:
-      - postgres
+      - backend-node
     environment:
       - CHOKIDAR_USEPOLLING=true
       - HOST=0.0.0.0
+  react-web:
+    build:
+      context: ./todo-react
+    volumes:
+      - ./todo-react:/react-web
+      - /react-web/node_modules
+    ports:
+      - 8080:8080
+    depends_on:
+      - backend-go
   backend-go:
     build:
       context: ./backend-go
@@ -41,7 +51,6 @@ services:
       - /node-server/node_modules
     depends_on:
       - postgres
-      - web
     environment:
       - CHOKIDAR_USEPOLLING=true
       - HOST=0.0.0.0
